@@ -110,6 +110,50 @@
     @keyframes fadeOut {
       to { opacity: 0; visibility: hidden; }
     }
+
+    /* 🔹 Estilos do modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      color: #a80000;
+    }
+
+    .modal-content input {
+      width: 90%;
+      padding: 10px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .modal-buttons {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-around;
+    }
   </style>
 </head>
 <body>
@@ -140,6 +184,19 @@
     © 2025 Federação de Tênis de Mesa do Estado de São Paulo
   </footer>
 
+  <!-- 🔹 Modal para confirmação de e-mail -->
+  <div id="emailModal" class="modal">
+    <div class="modal-content">
+      <h3>Confirmação de resposta</h3>
+      <p id="modalText"></p>
+      <input type="email" id="emailInput" placeholder="Digite seu e-mail" required>
+      <div class="modal-buttons">
+        <button id="confirmBtn" class="btn btn-green">Confirmar</button>
+        <button id="cancelBtn" class="btn btn-red">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSeTzU-AClRCSuW7sWT5t0wjnKMLzIEZVzvyYYil4TEl12k4Cg/formResponse";
 
@@ -147,13 +204,14 @@
     const ENTRY_ID_CLUBE = "entry.224125101";
     const ENTRY_ID_CATEGORIA = "entry.441182629";
     const ENTRY_ID_DECISAO = "entry.778892213";
+    const ENTRY_ID_EMAIL = "entry.969707115"; // ✅ Campo de e-mail
 
     let athletes = [];
+    let pendingData = null;
 
     async function loadCSV() {
       const response = await fetch("seletivaftmsplista.csv");
       const data = await response.text();
-
       const delimiter = data.includes(";") ? ";" : ",";
       const rows = data.split("\n").slice(1);
 
@@ -178,7 +236,6 @@
         option.textContent = club;
         clubSelect.appendChild(option);
       });
-
       clubSelect.addEventListener("change", () => showAthletes(clubSelect.value));
     }
 
@@ -201,36 +258,62 @@
             <small>${a.Categoria}</small>
           </div>
           <div>
-            <button class="btn btn-green" onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Quero jogar a seletiva')">QUERO JOGAR</button>
-            <button class="btn btn-red" onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Não vou jogar a seletiva')">NÃO VOU</button>
+            <button class="btn btn-green" onclick="openEmailModal('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Quero jogar a seletiva')">QUERO JOGAR</button>
+            <button class="btn btn-red" onclick="openEmailModal('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Não vou jogar a seletiva')">NÃO VOU</button>
           </div>
         `;
         listDiv.appendChild(div);
       });
     }
 
-    async function sendResponse(nome, clube, categoria, decisao) {
+    function openEmailModal(nome, clube, categoria, decisao) {
+      pendingData = { nome, clube, categoria, decisao };
+      document.getElementById("modalText").textContent =
+        `Confirme a resposta de ${nome}: "${decisao}".`;
+      document.getElementById("emailInput").value = "";
+      document.getElementById("emailModal").style.display = "flex";
+    }
+
+    async function confirmEmail() {
+      const email = document.getElementById("emailInput").value.trim();
+      if (!email) {
+        alert("Por favor, insira seu e-mail.");
+        return;
+      }
+      const emailValido = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
+      if (!emailValido) {
+        alert("Digite um e-mail válido.");
+        return;
+      }
+
+      const { nome, clube, categoria, decisao } = pendingData;
+      document.getElementById("emailModal").style.display = "none";
+
       const formData = new FormData();
       formData.append(ENTRY_ID_NOME, nome);
       formData.append(ENTRY_ID_CLUBE, clube);
       formData.append(ENTRY_ID_CATEGORIA, categoria);
       formData.append(ENTRY_ID_DECISAO, decisao);
+      formData.append(ENTRY_ID_EMAIL, email);
 
-      await fetch(formURL, {
-        method: "POST",
-        mode: "no-cors",
-        body: formData
-      });
+      await fetch(formURL, { method: "POST", mode: "no-cors", body: formData });
 
       const msgDiv = document.getElementById("confirmationMsg");
       msgDiv.className = "confirmation success show";
-      msgDiv.textContent = `✅ Resposta registrada: ${nome} - ${decisao}.`;
+      msgDiv.textContent = `✅ Resposta registrada: ${nome} - ${decisao}. Enviado por: ${email}`;
 
       setTimeout(() => {
         msgDiv.className = "confirmation";
         msgDiv.textContent = "";
       }, 4000);
     }
+
+    function closeModal() {
+      document.getElementById("emailModal").style.display = "none";
+    }
+
+    document.getElementById("confirmBtn").addEventListener("click", confirmEmail);
+    document.getElementById("cancelBtn").addEventListener("click", closeModal);
 
     loadCSV();
   </script>
