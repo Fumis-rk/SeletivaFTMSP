@@ -54,17 +54,29 @@
       padding: 10px 0;
     }
 
-    .athlete button {
-      background-color: #a80000;
+    .btn {
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       margin-left: 5px;
       padding: 8px 12px;
+      transition: 0.2s;
     }
 
-    .athlete button:hover {
+    .btn-green {
+      background-color: #2e8b57;
+    }
+
+    .btn-green:hover {
+      background-color: #1f6a3f;
+    }
+
+    .btn-red {
+      background-color: #a80000;
+    }
+
+    .btn-red:hover {
       background-color: #7a0000;
     }
 
@@ -72,7 +84,20 @@
       margin-top: 20px;
       text-align: center;
       font-weight: bold;
-      color: green;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+      animation: fadeOut 1s ease 3s forwards;
+    }
+
+    .confirmation.show {
+      display: block;
+    }
+
+    .confirmation.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
     }
 
     footer {
@@ -80,6 +105,10 @@
       font-size: 0.9rem;
       margin-top: 20px;
       color: #777;
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
     }
   </style>
 </head>
@@ -125,10 +154,9 @@
       const response = await fetch("seletivaftmsplista.csv");
       const data = await response.text();
 
-      // Detecta separador (vírgula ou ponto e vírgula)
       const delimiter = data.includes(";") ? ";" : ",";
-
       const rows = data.split("\n").slice(1);
+
       athletes = rows
         .map(row => row.trim())
         .filter(row => row.length > 0)
@@ -173,8 +201,8 @@
             <small>${a.Categoria}</small>
           </div>
           <div>
-            <button onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Quero jogar a seletiva')">QUERO JOGAR</button>
-            <button onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Não vou jogar a seletiva')">NÃO VOU</button>
+            <button class="btn btn-green" onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Quero jogar a seletiva')">QUERO JOGAR</button>
+            <button class="btn btn-red" onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Não vou jogar a seletiva')">NÃO VOU</button>
           </div>
         `;
         listDiv.appendChild(div);
@@ -194,10 +222,13 @@
         body: formData
       });
 
-      document.getElementById("confirmationMsg").textContent =
-        `Resposta registrada: ${nome} (${decisao}).`;
+      const msgDiv = document.getElementById("confirmationMsg");
+      msgDiv.className = "confirmation success show";
+      msgDiv.textContent = `✅ Resposta registrada: ${nome} - ${decisao}.`;
+
       setTimeout(() => {
-        document.getElementById("confirmationMsg").textContent = "";
+        msgDiv.className = "confirmation";
+        msgDiv.textContent = "";
       }, 4000);
     }
 
