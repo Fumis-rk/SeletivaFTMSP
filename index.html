@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Seletiva FTMSP 2025 - Lady, Sênior e Veteranos</title>
   <style>
     body {
@@ -10,194 +10,229 @@
       background-color: #f5f5f5;
       color: #333;
       margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-    header {
-      background-color: #8b0000;
-      color: white;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    img {
-      height: 100px;
-      display: block;
-      margin: 20px auto;
-    }
-    select, button {
-      padding: 10px;
-      margin: 10px;
-      font-size: 16px;
-    }
-    table {
-      width: 100%;
-      max-width: 800px;
-      margin: 20px auto;
-      border-collapse: collapse;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 8px;
-    }
-    th {
-      background-color: #8b0000;
-      color: white;
-    }
-    tr:nth-child(even) {
-      background-color: #f2f2f2;
-    }
-    .botao-jogar {
-      background-color: #2e8b57;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      padding: 8px 12px;
-    }
-    .botao-nao {
-      background-color: #b22222;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      padding: 8px 12px;
-    }
-    .botao-jogar:hover {
-      background-color: #3cb371;
-    }
-    .botao-nao:hover {
-      background-color: #dc143c;
+      padding: 0;
     }
 
-    /* Mensagem centralizada */
-    .mensagem {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(0, 0, 0, 0.8);
+    header {
+      background-color: #a80000;
       color: white;
-      padding: 20px 40px;
-      border-radius: 10px;
-      font-size: 18px;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      z-index: 9999;
+      text-align: center;
+      padding: 1rem;
     }
-    .mensagem.visivel {
-      opacity: 1;
+
+    header img {
+      height: 80px;
+      margin-bottom: 10px;
+    }
+
+    main {
+      max-width: 850px;
+      margin: 20px auto;
+      background-color: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 5px 0;
+    }
+
+    select {
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .athlete {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .btn {
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 5px;
+      padding: 8px 12px;
+      transition: 0.2s;
+    }
+
+    .btn-green {
+      background-color: #2e8b57;
+    }
+
+    .btn-green:hover {
+      background-color: #1f6a3f;
+    }
+
+    .btn-red {
+      background-color: #a80000;
+    }
+
+    .btn-red:hover {
+      background-color: #7a0000;
+    }
+
+    .confirmation {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 6px;
+      display: none;
+      animation: fadeOut 1s ease 3s forwards;
+    }
+
+    .confirmation.show {
+      display: block;
+    }
+
+    .confirmation.success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      color: #777;
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; visibility: hidden; }
     }
   </style>
 </head>
 <body>
   <header>
+    <img src="logo.png" alt="Logo Federação de Tênis de Mesa de São Paulo">
     <h1>Seletiva FTMSP 2025 - Lady, Sênior e Veteranos</h1>
   </header>
 
-  <img src="logo-ftmsp.png" alt="Logo Federação de Tênis de Mesa de São Paulo">
+  <main>
+    <p>
+      Caros dirigentes, confirme abaixo a participação de seu atleta na Seletiva FTMSP 2025.<br>
+      Selecione o clube e responda referente ao(s) seu(s) atleta(s).<br><br>
+      Caso o atleta tenha interesse em participar da seletiva, desde que esteja entre os 4 primeiros colocados, selecione a opção <b>“QUERO JOGAR A SELETIVA”</b>.<br>
+      Caso o atleta não queira, selecione a opção <b>“NÃO VOU JOGAR A SELETIVA”</b>.
+    </p>
 
-  <p>Caros dirigentes, confirme abaixo a participação de seu atleta na Seletiva FTMSP 2025.<br>
-  Selecione o seu clube e responda referente ao(s) seu(s) atleta(s).</p>
+    <h3>Selecione o Clube:</h3>
+    <select id="clubSelect">
+      <option value="">-- Escolha um clube --</option>
+    </select>
 
-  <select id="clubeSelect">
-    <option value="">Selecione o clube</option>
-  </select>
+    <div id="athletesList"></div>
 
-  <table id="tabelaAtletas" style="display:none;">
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Categoria</th>
-        <th>Ação</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+    <div class="confirmation" id="confirmationMsg"></div>
+  </main>
 
-  <div id="mensagem" class="mensagem"></div>
+  <footer>
+    © 2025 Federação de Tênis de Mesa do Estado de São Paulo
+  </footer>
 
   <script>
-    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeTzU-AClRCSuW7sWT5t0wjnKMLzIEZVzvyYYil4TEl12k4Cg/formResponse";
+    const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSeTzU-AClRCSuW7sWT5t0wjnKMLzIEZVzvyYYil4TEl12k4Cg/formResponse";
+
     const ENTRY_ID_NOME = "entry.434251181";
     const ENTRY_ID_CLUBE = "entry.224125101";
     const ENTRY_ID_CATEGORIA = "entry.441182629";
     const ENTRY_ID_DECISAO = "entry.778892213";
 
-    const csvUrl = "seletivaftmsplista.csv";
+    let athletes = [];
 
-    async function carregarCSV() {
-      const resposta = await fetch(csvUrl);
-      const texto = await resposta.text();
-      const linhas = texto.trim().split("\n").slice(1);
-      const atletas = linhas.map(l => {
-        const [Nome, Clube, Categoria] = l.split(",");
-        return { Nome, Clube, Categoria };
-      });
-      popularClubes(atletas);
+    async function loadCSV() {
+      const response = await fetch("seletivaftmsplista.csv");
+      const data = await response.text();
+
+      const delimiter = data.includes(";") ? ";" : ",";
+      const rows = data.split("\n").slice(1);
+
+      athletes = rows
+        .map(row => row.trim())
+        .filter(row => row.length > 0)
+        .map(row => {
+          const [Nome, Clube, Categoria] = row.split(delimiter);
+          return { Nome: Nome?.trim(), Clube: Clube?.trim(), Categoria: Categoria?.trim() };
+        })
+        .filter(a => a.Nome && a.Clube && a.Categoria);
+
+      populateClubs();
     }
 
-    function popularClubes(atletas) {
-      const clubes = [...new Set(atletas.map(a => a.Clube))].sort();
-      const select = document.getElementById("clubeSelect");
-      clubes.forEach(clube => {
-        const opt = document.createElement("option");
-        opt.value = clube;
-        opt.textContent = clube;
-        select.appendChild(opt);
+    function populateClubs() {
+      const clubSelect = document.getElementById("clubSelect");
+      const clubs = [...new Set(athletes.map(a => a.Clube))].sort();
+      clubs.forEach(club => {
+        const option = document.createElement("option");
+        option.value = club;
+        option.textContent = club;
+        clubSelect.appendChild(option);
       });
 
-      select.addEventListener("change", () => {
-        mostrarAtletas(select.value, atletas);
-      });
+      clubSelect.addEventListener("change", () => showAthletes(clubSelect.value));
     }
 
-    function mostrarAtletas(clube, atletas) {
-      const tabela = document.getElementById("tabelaAtletas");
-      const tbody = tabela.querySelector("tbody");
-      tbody.innerHTML = "";
+    function showAthletes(club) {
+      const listDiv = document.getElementById("athletesList");
+      listDiv.innerHTML = "";
+      const filtered = athletes.filter(a => a.Clube === club);
 
-      const filtrados = atletas.filter(a => a.Clube === clube);
-      if (filtrados.length === 0) {
-        tabela.style.display = "none";
+      if (filtered.length === 0) {
+        listDiv.innerHTML = "<p>Nenhum atleta encontrado para este clube.</p>";
         return;
       }
 
-      filtrados.forEach(a => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${a.Nome}</td>
-          <td>${a.Categoria}</td>
-          <td>
-            <button class="botao-jogar" onclick="enviarResposta('${a.Nome}','${a.Clube}','${a.Categoria}','Quero jogar a seletiva')">Quero jogar</button>
-            <button class="botao-nao" onclick="enviarResposta('${a.Nome}','${a.Clube}','${a.Categoria}','Não vou jogar a seletiva')">Não vou jogar</button>
-          </td>`;
-        tbody.appendChild(tr);
+      filtered.forEach(a => {
+        const div = document.createElement("div");
+        div.className = "athlete";
+        div.innerHTML = `
+          <div>
+            <strong>${a.Nome}</strong><br>
+            <small>${a.Categoria}</small>
+          </div>
+          <div>
+            <button class="btn btn-green" onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Quero jogar a seletiva')">QUERO JOGAR</button>
+            <button class="btn btn-red" onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Não vou jogar a seletiva')">NÃO VOU</button>
+          </div>
+        `;
+        listDiv.appendChild(div);
       });
-
-      tabela.style.display = "table";
     }
 
-    async function enviarResposta(nome, clube, categoria, decisao) {
+    async function sendResponse(nome, clube, categoria, decisao) {
       const formData = new FormData();
       formData.append(ENTRY_ID_NOME, nome);
       formData.append(ENTRY_ID_CLUBE, clube);
       formData.append(ENTRY_ID_CATEGORIA, categoria);
       formData.append(ENTRY_ID_DECISAO, decisao);
 
-      await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData });
-      mostrarMensagem(`Resposta enviada: ${nome} - ${decisao}`);
-    }
+      await fetch(formURL, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+      });
 
-    function mostrarMensagem(texto) {
-      const msg = document.getElementById("mensagem");
-      msg.textContent = texto;
-      msg.classList.add("visivel");
+      const msgDiv = document.getElementById("confirmationMsg");
+      msgDiv.className = "confirmation success show";
+      msgDiv.textContent = `✅ Resposta registrada: ${nome} - ${decisao}.`;
+
       setTimeout(() => {
-        msg.classList.remove("visivel");
-      }, 2500);
+        msgDiv.className = "confirmation";
+        msgDiv.textContent = "";
+      }, 4000);
     }
 
-    carregarCSV();
+    loadCSV();
   </script>
 </body>
 </html>
