@@ -269,7 +269,7 @@
     function openEmailModal(nome, clube, categoria, decisao) {
       pendingData = { nome, clube, categoria, decisao };
       document.getElementById("modalText").textContent =
-        `Confirme a resposta de ${nome}: "${decisao}".`;
+        `Por favor, somente o dirigente, técnico ou o próprio atleta pode responder. Confirme a resposta de ${nome}: "${decisao}".`;
       document.getElementById("emailInput").value = "";
       document.getElementById("emailModal").style.display = "flex";
     }
