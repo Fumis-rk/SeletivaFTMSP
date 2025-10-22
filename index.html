@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seletiva FTMSP 2025 - Lady, Sênior e Veteranos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #a80000;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    select, button {
+      padding: 10px;
+      font-size: 1rem;
+      margin: 5px 0;
+    }
+
+    select {
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .athlete {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+    }
+
+    .athlete button {
+      background-color: #a80000;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 5px;
+    }
+
+    .athlete button:hover {
+      background-color: #7a0000;
+    }
+
+    .confirmation {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Seletiva FTMSP 2025 - Lady, Sênior e Veteranos</h1>
+  </header>
+
+  <main>
+    <p>
+      Caros dirigentes, confirme abaixo a participação de seu atleta na Seletiva FTMSP 2025.<br>
+      Selecione o clube e responda referente ao(s) seu(s) atleta(s).<br><br>
+      Caso o atleta tenha interesse em participar da seletiva, desde que esteja entre os 4 primeiros colocados, selecione a opção <b>“QUERO JOGAR A SELETIVA”</b>.<br>
+      Caso o atleta não queira, selecione a opção <b>“NÃO VOU JOGAR A SELETIVA”</b>.
+    </p>
+
+    <h3>Selecione o Clube:</h3>
+    <select id="clubSelect">
+      <option value="">-- Escolha um clube --</option>
+    </select>
+
+    <div id="athletesList"></div>
+
+    <div class="confirmation" id="confirmationMsg"></div>
+  </main>
+
+  <script>
+    const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSeTzU-AClRCSuW7sWT5t0wjnKMLzIEZVzvyYYil4TEl12k4Cg/formResponse";
+
+    const ENTRY_ID_NOME = "entry.434251181";
+    const ENTRY_ID_CLUBE = "entry.224125101";
+    const ENTRY_ID_CATEGORIA = "entry.441182629";
+    const ENTRY_ID_DECISAO = "entry.778892213";
+
+    let athletes = [];
+
+    async function loadCSV() {
+      const response = await fetch("seletivaftmsplista.csv");
+      const data = await response.text();
+      const rows = data.split("\n").slice(1);
+      athletes = rows
+        .map(row => row.trim())
+        .filter(row => row.length > 0)
+        .map(row => {
+          const [Nome, Clube, Categoria] = row.split(",");
+          return { Nome: Nome?.trim(), Clube: Clube?.trim(), Categoria: Categoria?.trim() };
+        });
+
+      populateClubs();
+    }
+
+    function populateClubs() {
+      const clubSelect = document.getElementById("clubSelect");
+      const clubs = [...new Set(athletes.map(a => a.Clube))].sort();
+      clubs.forEach(club => {
+        const option = document.createElement("option");
+        option.value = club;
+        option.textContent = club;
+        clubSelect.appendChild(option);
+      });
+
+      clubSelect.addEventListener("change", () => showAthletes(clubSelect.value));
+    }
+
+    function showAthletes(club) {
+      const listDiv = document.getElementById("athletesList");
+      listDiv.innerHTML = "";
+      const filtered = athletes.filter(a => a.Clube === club);
+
+      filtered.forEach(a => {
+        const div = document.createElement("div");
+        div.className = "athlete";
+        div.innerHTML = `
+          <div>
+            <strong>${a.Nome}</strong><br>
+            <small>${a.Categoria}</small>
+          </div>
+          <div>
+            <button onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Quero jogar a seletiva')">QUERO JOGAR</button>
+            <button onclick="sendResponse('${a.Nome}', '${a.Clube}', '${a.Categoria}', 'Não vou jogar a seletiva')">NÃO VOU</button>
+          </div>
+        `;
+        listDiv.appendChild(div);
+      });
+    }
+
+    async function sendResponse(nome, clube, categoria, decisao) {
+      const formData = new FormData();
+      formData.append(ENTRY_ID_NOME, nome);
+      formData.append(ENTRY_ID_CLUBE, clube);
+      formData.append(ENTRY_ID_CATEGORIA, categoria);
+      formData.append(ENTRY_ID_DECISAO, decisao);
+
+      await fetch(formURL, {
+        method: "POST",
+        mode: "no-cors",
+        body: formData
+      });
+
+      document.getElementById("confirmationMsg").textContent =
+        `Resposta registrada: ${nome} (${decisao}).`;
+      setTimeout(() => {
+        document.getElementById("confirmationMsg").textContent = "";
+      }, 4000);
+    }
+
+    loadCSV();
+  </script>
+</body>
+</html>
